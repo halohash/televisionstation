@@ -1,0 +1,241 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="https://hashpie.pages.dev/misc/classicroboto/style.css" />
+
+        <style>
+            :root {
+                --SlimeGreen: #b8ce47;
+                --NickOrange: #ed9028;
+            }
+
+            body {
+                background-image: url(./exoskele.png);
+                background-size: 100vw 100vh;
+                background-color: black;
+                width: 100vw;
+                margin: 0;
+                font-family: "Classic Roboto Condensed Regular", Arial, sans-serif;
+            }
+
+            video {
+                position: absolute;
+                top: 0px;
+                right: 0px;
+                width: 83.3vw;
+                height: 83.3vh;
+                object-fit: fill;
+            }
+
+            .ticker {
+                position: absolute !important;
+                bottom: 6.2vw !important;
+                right: 0vw !important;
+                color: white;
+                text-align: end;
+                width: 83.3vw;
+                background: var(--NickOrange);
+            }
+
+            .clock {
+                position: fixed;
+                top: -10px;
+                left: 7px;
+                text-align: center;
+                color: black;
+            }
+
+            #promo {
+                width: 16.6vw;
+                height: 25vh;
+                top: 7.8vw;
+                position: absolute;
+            }
+
+#channellogo {
+    bottom: 16px;
+    left: 16px;
+    position: absolute;
+}
+#providerlogo {
+    bottom: 16px;
+    right: 16px;
+    position: absolute;
+}
+        </style>
+
+        <title>My Television Channel</title>
+    </head>
+<script>
+window.config = []
+    
+</script>
+    <body>
+        <img id="promo">
+        <img id="channellogo"> <!--- replace this src with your channel logo -->
+        <img id="providerlogo"> <!--- replace this src with your provider's logo -->
+        
+        <video id="video" muted></video>
+
+        <h1 class="ticker" id="ticker">TICKER</h1>
+        <h1 class="clock" id="clock">12:34:56 AMPM</h1>
+
+        <script>
+window.config.channellogo = "logo.png";
+window.config.providerlogo = "provider.png";
+
+            const video = document.getElementById("video");
+            const ticker = document.getElementById("ticker");
+            const clock = document.getElementById("clock");
+            const promo = document.getElementById("promo");
+
+            let videos = [];
+            let lastVideo = null;
+            let lastPromo = null;
+
+            async function loadVideos() {
+                try {
+                    const response = await fetch(
+                        "videos.json?cache=" + Date.now()
+                    );
+
+                    videos = await response.json();
+
+                    playRandomVideo();
+                } catch (error) {
+                    console.error("Video list error:", error);
+                }
+            }
+
+            function playRandomVideo() {
+                if (videos.length === 0) {
+                    return;
+                }
+
+                let selected;
+
+                do {
+                    selected =
+                        videos[
+                            Math.floor(
+                                Math.random() * videos.length
+                            )
+                        ];
+                } while (
+                    videos.length > 1 &&
+                    selected === lastVideo
+                );
+
+                lastVideo = selected;
+
+                video.src = selected;
+                video.play();
+            }
+
+            video.addEventListener("ended", () => {
+                playRandomVideo();
+            });
+
+            video.addEventListener("error", () => {
+                playRandomVideo();
+            });
+const logo = document.getElementById("channellogo");
+const provider = document.getElementById("providerlogo");
+logo.src = window.config.channellogo;
+provider.src = window.config.providerlogo;
+
+            function vmun() {
+                video.muted = false;
+            }
+
+            video.addEventListener("click", vmun);
+
+            function updateClock() {
+                const now = new Date();
+
+                clock.textContent =
+                    now.toLocaleTimeString([], {
+                        hour: "numeric",
+                        minute: "2-digit",
+                        second: "2-digit"
+                    });
+            }
+
+            updateClock();
+
+            setInterval(
+                updateClock,
+                1000
+            );
+
+            async function updateTicker() {
+                try {
+                    const response = await fetch(
+                        "ticker.txt?cache=" + Date.now()
+                    );
+
+                    if (!response.ok) {
+                        ticker.textContent = "HTTP EFFED UP";
+                        throw new Error("http effed up");
+                    }
+
+                    const text = await response.text();
+
+                    ticker.textContent = text.trim();
+                } catch (error) {
+                    console.error("Ticker error:", error);
+                }
+            }
+
+            updateTicker();
+
+            setInterval(
+                updateTicker,
+                60000
+            );
+
+            async function loadPromo() {
+                try {
+                    const response = await fetch(
+                        "promos.json?cache=" + Date.now()
+                    );
+
+                    const promos = await response.json();
+
+                    if (promos.length === 0) {
+                        return;
+                    }
+
+                    let selected;
+
+                    do {
+                        selected =
+                            promos[
+                                Math.floor(
+                                    Math.random() * promos.length
+                                )
+                            ];
+                    } while (
+                        promos.length > 1 &&
+                        selected === lastPromo
+                    );
+
+                    lastPromo = selected;
+
+                    promo.src = selected;
+                } catch (error) {
+                    console.error("Promo list error:", error);
+                }
+            }
+
+            loadPromo();
+
+            setInterval(
+                loadPromo,
+                60000
+            );
+
+            loadVideos();
+        </script>
+    </body>
+</html>

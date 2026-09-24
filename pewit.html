@@ -1,0 +1,104 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Video URL Extractor</title> <style> * { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 30px;
+  font-family: Arial, sans-serif;
+  background: #111827;
+  color: #f9fafb;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+h1 {
+  margin-bottom: 8px;
+}
+
+p {
+  color: #9ca3af;
+}
+
+textarea {
+  width: 100%;
+  min-height: 280px;
+  padding: 15px;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  background: #1f2937;
+  color: #f9fafb;
+  font-family: monospace;
+  font-size: 14px;
+  resize: vertical;
+  outline: none;
+}
+
+textarea:focus {
+  border-color: #60a5fa;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+
+button {
+  border: 0;
+  border-radius: 7px;
+  padding: 10px 16px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+button.secondary {
+  background: #374151;
+}
+
+button.secondary:hover {
+  background: #4b5563;
+}
+
+.error {
+  color: #f87171;
+  margin: 10px 0;
+  white-space: pre-wrap;
+}
+
+.count {
+  color: #9ca3af;
+  margin-bottom: 8px;
+}
+
+</style> </head> <body> <div class="container"> <h1>Video URL Extractor</h1> <p> Paste your JSON array below. The tool extracts every <code>videourl</code> value. </p>
+<textarea id="input">[
+
+
+{
+"show": "test",
+"videourl": "https://file.garden/aUYIWVAKvQxCBY-_/database/videos/nexus10.mp4"
+}
+]</textarea>
+
+<div class="buttons">
+  <button onclick="convert()">Convert</button>
+  <button class="secondary" onclick="copyOutput()">Copy Output</button>
+  <button class="secondary" onclick="downloadOutput()">Download JSON</button>
+  <button class="secondary" onclick="clearAll()">Clear</button>
+</div>
+
+<div id="error" class="error"></div>
+<div id="count" class="count"></div>
+
+<textarea id="output" readonly placeholder="Output will appear here..."></textarea>
+
+</div> <script> function convert() { const input = document.getElementById("input").value; const output = document.getElementById("output"); const error = document.getElementById("error"); const count = document.getElementById("count"); error.textContent = ""; count.textContent = ""; try { const data = JSON.parse(input); if (!Array.isArray(data)) { throw new Error("Input must be a JSON array."); } const urls = data .map(item => item?.videourl) .filter(url => typeof url === "string" && url.trim() !== ""); output.value = JSON.stringify(urls, null, 4); count.textContent = `${urls.length} video URL${urls.length === 1 ? "" : "s"} found.`; } catch (err) { output.value = ""; error.textContent = "Invalid JSON: " + err.message; } } async function copyOutput() { const output = document.getElementById("output"); if (!output.value) { convert(); } if (output.value) { await navigator.clipboard.writeText(output.value); } } function downloadOutput() { const output = document.getElementById("output"); if (!output.value) { convert(); } if (!output.value) return; const blob = new Blob([output.value], { type: "application/json" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "video-urls.json"; a.click(); URL.revokeObjectURL(url); } function clearAll() { document.getElementById("input").value = ""; document.getElementById("output").value = ""; document.getElementById("error").textContent = ""; document.getElementById("count").textContent = ""; } 
+  convert(); </script> </body> </html>
