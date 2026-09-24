@@ -142,7 +142,7 @@ window.config.providerlogo = "provider.png";
 const logo = document.getElementById("channellogo");
 const provider = document.getElementById("providerlogo");
 logo.src = window.config.channellogo;
-provider.src = window.config.providerlogo;
+if (window.config.providerlogo === null) {provider.hidden=true} else {provider.src = window.config.providerlogo;}
 
             function vmun() {
                 video.muted = false;
