@@ -7,3 +7,5 @@ there is also promo and video configurations as separate files.\
 there is an example page hosted [here](https://halohash.github.io/televisionstation).\
 if you want a custom exoskeleton (an png image). replace `exoskele.png` in either the background css or the file list.\
 you can also edit the colors of the ticker, clock and even remove the ticker background.
+# Updates
+Sep 23, 2026 at 9:53 PM - the provider image will be hidden when its set to `null`
